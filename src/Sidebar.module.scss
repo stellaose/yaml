@@ -1,0 +1,56 @@
+@import 'variables';
+
+.sidebar_body{
+  width: 7.36625rem;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  position: fixed;
+  box-shadow: $box-shadow;
+  padding: 3.706875rem 0;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  
+  .sidebar_content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5.90875rem;
+    
+    .menu{
+      width: 1.375rem;
+      height: 1.1575rem;
+    }
+    
+    .sidebar_mid{
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+      
+      .house{
+        width: 2.25rem;
+        height: 2.193125rem;
+      }
+      
+      .document{
+        width: 2.0625rem;
+        height: 2.01rem;
+      }
+    }
+  }
+  
+  p{
+    color: $white;
+    background-color: $blue;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 50%;
+  }
+}
+
+.body_layout{
+  margin-left: 7.36625rem;
+}
