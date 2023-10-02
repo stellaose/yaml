@@ -4,17 +4,16 @@ import styles from '../Landing.module.scss'
 interface CheckboxProps {
   label: string;
   checked: boolean;
-  onChange: () => void;
 }
 
-const Checkbox: React.FC<CheckboxProps> = ({ label, checked, onChange }) => {
+const Checkbox: React.FC<CheckboxProps> = ({ label, checked}) => {
   return (
     <div className= {checked ? styles.checked_green : styles.checked_white}>
       <label >
         <input
           type="checkbox"
           checked={checked}
-          onChange={onChange}
+          readOnly
         />
         <svg
           className={checked ? styles.checkbox_active : styles.checkbox}

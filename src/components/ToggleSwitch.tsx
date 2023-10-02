@@ -4,17 +4,12 @@ import styles from '../Landing.module.scss'
 const ToggleSwitch = ({ 
   label = '' ,
   checked = false,
-  onChange= () => {},
   id = ''
 } : {
   label: string;
   checked: boolean;
-  onChange: (checked: boolean) => void;
   id: string;
 }) => {
-  const handleToggleChange = () => {
-    onChange(!checked);
-  };
   
   return (
     <div className={styles.toggle_container}>
@@ -25,7 +20,7 @@ const ToggleSwitch = ({
           name={id} 
           id={id} 
           checked={checked} 
-          onChange={handleToggleChange}
+          readOnly
         />
         <label className={`${styles.toggle_label} ${checked ? styles.toggle_on : styles.toggle_off}`} htmlFor={id}>
           <span className={styles.toggle_label_inner} />

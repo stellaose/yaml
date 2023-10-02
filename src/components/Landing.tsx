@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect } from "react";
 import BodyLayout from "./BodyLayout";
 import Card from "./Card";
 import styles from "../Landing.module.scss";
 import ToggleSwitch from "./ToggleSwitch";
 import Checkbox from "./Checkbox";
+import axios from "axios";
 
 const options = [
   {
@@ -38,30 +40,40 @@ const options = [
 const Landing = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
+  const [data, setData] = useState<any | null>(null)
+  const [response, setResponse] = useState<string | any>({
+    firstName:'',
+    lastName: '',
+    email:'',
+  })
+  const [toggle, setToggle] =useState({
+    phoneNum:false,
+    residence: false,
+    nationality: false,
+    DOB: false,
+    idNum: false,
+    gender: false,
+    resume: false,
+    experience: false,
+    education:false
+  })
+  
+  
+  const [check, setCheck] =useState({
+   
+    phoneNum:false,
+    residence: false,
+    nationality: false,
+    DOB: false,
+    idNum: false,
+    gender: false,
+    resume: false,
+    experience: false,
+    education:false
+  })
+  
   const [selectOption, setSelectOption] = useState('')
   const [question, setQuestion] = useState('')
-
-  const [checkedPhone, setCheckedPhone] = useState(false);
-  const [checkboxPhone, setCheckboxPhone] = useState(false);
-
-  const [checkedNation, setCheckedNation] = useState(false);
-  const [checkboxNation, setCheckboxNation] = useState(false);
-
-  const [checkedResidence, setCheckedResidence] = useState(false);
-  const [checkboxResidence, setCheckboxResidence] = useState(false);
-
-  const [checkedID, setCheckedID] = useState(false);
-  const [checkboxID, setCheckboxID] = useState(false);
-
-  const [checkedDOB, setCheckedDOB] = useState(false);
-  const [checkboxDOB, setCheckboxDOB] = useState(false);
-  
-  const [checkedGender, setCheckedGender] = useState(false);
-  const [checkboxGender, setCheckboxGender] = useState(false);
   
   // const [showQuestion, setShowQuestion] = useState(false)
   const [showQuestion, setShowQuestion] = useState(true)
@@ -87,17 +99,6 @@ const Landing = () => {
     }
   };
 
-  const handleFirstName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFirstName(e.target.value);
-  };
-
-  const handleLastName = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLastName(e.target.value);
-  };
-
-  const handleEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
   
   const handleQuestion = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion(e.target.value);
@@ -116,60 +117,48 @@ const Landing = () => {
     console.log(selectOption)
   }
 
-  const handleToggleChange = (checked: boolean) => {
-    setCheckedPhone(checked);
-  };
   
-  const handleCheckbox = () => {
-    setCheckbox(!checkbox);
-  };
-
-  const handleCheckboxPhone = () => {
-    setCheckboxPhone(!checkboxPhone);
-  };
-
-  const handleToggleNation = (checked: boolean) => {
-    setCheckedNation(checked);
-  };
-
-  const handleCheckNation = () => {
-    setCheckboxNation(!checkboxNation);
-  };
-
-  const handleToggleResidence = (checked: boolean) => {
-    setCheckedResidence(checked);
-  };
-
-  const handleCheckResidence = () => {
-    setCheckboxResidence(!checkboxResidence);
-  };
-
-  const handleToggleID = (checked: boolean) => {
-    setCheckedID(checked);
-  };
-
-  const handleCheckID = () => {
-    setCheckboxID(!checkboxID);
-  };
-
-  const handleToggleDOB = (checked: boolean) => {
-    setCheckedDOB(checked);
-  };
-
-  const handleCheckDOB = () => {
-    setCheckboxDOB(!checkboxDOB);
-  };
+  useEffect(() => {
+    (
+      async () => {
+        try {
+          const response = await axios.get('http://127.0.0.1:4010/api/812.0561643107567/programs/excepturi/application-form')
+          setData(response?.data?.data.attributes)
+          const updatedToggle = {
+            phoneNum: data.personalInformation.phoneNumber.show,
+            residence: data.personalInformation.currentResidence.show,
+            nationality: data.personalInformation.nationality.show,
+            DOB: data.personalInformation.dateOfBirth.show,
+            idNum: data.personalInformation.idNumber.show,
+            gender: data.personalInformation.gender.show,
+            resume: data.profile.resume.show,
+            education: data.profile.education.show,
+            experience: data.profile.experience.show
+          };
+          
+          const updatedCheck ={
+            phoneNum: data.personalInformation.phoneNumber.internalUse,
+            residence: data.personalInformation.currentResidence.internalUse,
+            nationality: data.personalInformation.nationality.internalUse,
+            DOB: data.personalInformation.dateOfBirth.internalUse,
+            idNum: data.personalInformation.idNumber.internalUse,
+            gender: data.personalInformation.gender.internalUse,
+            resume: data.profile.resume.mandatory,
+            experience: data.profile.experience.mandatory,
+            education: data.profile.education.mandatory
+          }
+          
+          setToggle(updatedToggle)
+          setCheck(updatedCheck)
+         console.log(toggle)
+        
+        } catch (error:any) {
+          
+        }
+      }
+    )()
+  }, [])
   
-  const handleToggleGender = (checked: boolean) => {
-    setCheckedGender(checked);
-  };
-
-  const handleCheckGender = () => {
-    setCheckboxGender(!checkboxGender);
-  };
-  
-  
-
   return (
     <>
       <BodyLayout>
@@ -231,27 +220,27 @@ const Landing = () => {
                       <label className={styles.label}>FirstName</label>
                       <input
                         type="text"
-                        value={firstName}
+                        value={response.firstName}
                         name="firstName"
-                        onChange={handleFirstName}
+                        readOnly
                       />
                     </div>
                     <div className={styles.input_form}>
                       <label className={styles.label}>LastName</label>
                       <input
                         type="text"
-                        value={lastName}
+                        value={response.lastName}
                         name="lastName"
-                        onChange={handleLastName}
+                        readOnly
                       />
                     </div>
                     <div className={styles.input_form}>
                       <label className={styles.label}>Email</label>
                       <input
                         type="email"
-                        value={email}
+                        value={response.email}
                         name="email"
-                        onChange={handleEmail}
+                        readOnly
                       />
                     </div>
                     <div className={styles.input_checkbox}>
@@ -261,15 +250,15 @@ const Landing = () => {
                         </label>
                         <div className={styles.custom_input}>
                           <Checkbox
-                            checked={checkboxPhone}
-                            onChange={handleCheckboxPhone}
+                            checked={check.phoneNum}
+                            // onChange={handleCheckboxPhone}
                             label="Internal"
                           />
                           <ToggleSwitch
                             id="phoneNumber"
-                            label={checkedPhone ? "Show" : "Hide"}
-                            checked={checkedPhone}
-                            onChange={handleToggleChange}
+                            label={toggle?.phoneNum ? "Show" : "Hide"}
+                            checked={toggle.phoneNum}
+                            // onChange={handleToggleChange}
                           />
                         </div>
                       </div>
@@ -281,16 +270,14 @@ const Landing = () => {
                         <label className={styles.label}>Nationality </label>
                         <div className={styles.custom_input}>
                           <Checkbox
-                            checked={checkboxNation}
-                            onChange={handleCheckNation}
+                            checked={check.nationality}
                             label="Internal"
                           />
                           <ToggleSwitch
                             id="nationality"
-                            label={checkedNation ? "Show" : "Hide"}
+                            label={toggle.nationality ? "Show" : "Hide"}
                             // label='Naame'
-                            checked={checkedNation}
-                            onChange={handleToggleNation}
+                            checked={toggle.nationality }
                           />
                         </div>
                       </div>
@@ -304,15 +291,13 @@ const Landing = () => {
                         </label>
                         <div className={styles.custom_input}>
                           <Checkbox
-                            checked={checkboxResidence}
-                            onChange={handleCheckResidence}
+                            checked={check.residence}
                             label="Internal"
                           />
                           <ToggleSwitch
                             id="residence"
-                            label={checkedResidence ? "Show" : "Hide"}
-                            checked={checkedResidence}
-                            onChange={handleToggleResidence}
+                            label={toggle.residence ? "Show" : "Hide"}
+                            checked={toggle.residence}
                           />
                         </div>
                       </div>
@@ -324,15 +309,13 @@ const Landing = () => {
                         <label className={styles.label}>ID Number </label>
                         <div className={styles.custom_input}>
                           <Checkbox
-                            checked={checkboxID}
-                            onChange={handleCheckID}
+                            checked={check.idNum}
                             label="Internal"
                           />
                           <ToggleSwitch
-                            id="ID"
-                            label={checkedID ? "Show" : "Hide"}
-                            checked={checkedID}
-                            onChange={handleToggleID}
+                            id="idNumber"
+                            label={toggle.idNum ? "Show" : "Hide"}
+                            checked={toggle.idNum}
                           />
                         </div>
                       </div>
@@ -344,15 +327,13 @@ const Landing = () => {
                         <label className={styles.label}>Date of Birth</label>
                         <div className={styles.custom_input}>
                           <Checkbox
-                            checked={checkboxDOB}
-                            onChange={handleCheckDOB}
+                            checked={check.DOB}
                             label="Internal"
                           />
                           <ToggleSwitch
                             id="DOB"
-                            label={checkedDOB ? "Show" : "Hide"}
-                            checked={checkedDOB}
-                            onChange={handleToggleDOB}
+                            label={toggle.DOB ? "Show" : "Hide"}
+                            checked={toggle.DOB}
                           />
                         </div>
                       </div>
@@ -364,15 +345,13 @@ const Landing = () => {
                         <label className={styles.label}>Gender</label>
                         <div className={styles.custom_input}>
                           <Checkbox
-                            checked={checkboxGender}
-                            onChange={handleCheckGender}
+                            checked={check.gender}
                             label="Internal"
                           />
                           <ToggleSwitch
                             id="Gender"
-                            label={checkedGender ? "Show" : "Hide"}
-                            checked={checkedGender}
-                            onChange={handleToggleGender}
+                            label={toggle.gender ? "Show" : "Hide"}
+                            checked={toggle.gender}
                           />
                           
                          
@@ -381,6 +360,93 @@ const Landing = () => {
                       <input type="text" />
                     </div>
                     
+                    <div>
+                      <p className={styles.change_black} onClick={() => {
+                        setShowQuestion(true)
+                        window.scrollBy({
+                          top:
+                            20 *
+                            parseFloat(
+                              getComputedStyle(document.documentElement).fontSize
+                            ),
+                          behavior: "smooth",
+                        });
+                      }}>
+                        <img src="/assets/Add.png" alt="" />
+                        Add question
+                      </p>
+                    </div>
+                  </form>
+                </div>
+              </Card>
+            </div>
+            
+            <div className={styles.personal_info_body}>
+              <Card title="Profile">
+                <div className={styles.personal_body}>
+                  <form action="" className={styles.form_body}>
+                   
+                    <div className={styles.input_checkbox}>
+                      <div className={styles.input_label}>
+                        <label className={styles.label}>
+                          Education
+                        </label>
+                        <div className={styles.custom_input}>
+                          <Checkbox
+                            checked={check.education}
+                            label="Mandatory"
+                          />
+                          <ToggleSwitch
+                            id="education"
+                            label={toggle.education ? "Show" : "Hide"}
+                            checked={toggle.education}
+                          />
+                        </div>
+                      </div>
+                      <input type="text" />
+                    </div>
+                    
+                    <div className={styles.input_checkbox}>
+                      <div className={styles.input_label}>
+                        <label className={styles.label}>
+                          Experience{" "}
+                        </label>
+                        <div className={styles.custom_input}>
+                          <Checkbox
+                            checked={check.experience}
+                            label="Mandatory"
+                          />
+                          <ToggleSwitch
+                            id="experience"
+                            label={toggle.experience ? "Show" : "Hide"}
+                            checked={toggle.experience}
+                          />
+                        </div>
+                      </div>
+                      <input type="text" />
+                    </div>
+
+                    <div className={styles.input_checkbox}>
+                      <div className={styles.input_label}>
+                        <label className={styles.label}>Resume </label>
+                        <div className={styles.custom_input}>
+                          <Checkbox
+                            checked={check.resume}
+                            label="Mandatory"
+                          />
+                          <ToggleSwitch
+                            id="resume"
+                            label={toggle.resume ? "Show" : "Hide"}
+                            // label='Naame'
+                            checked={toggle.resume}
+                          />
+                        </div>
+                      </div>
+                      <input type="text" />
+                    </div>
+
+                 
+
                     <div>
                       <p className={styles.change_black} onClick={() => {
                         setShowQuestion(true)
@@ -480,7 +546,6 @@ const Landing = () => {
                                 
                                 <Checkbox
                                   checked={checkbox}
-                                  onChange={handleCheckbox}
                                   label="Enable “Other” option "
                                 />
                                 
@@ -543,7 +608,6 @@ const Landing = () => {
                                 
                                 <Checkbox
                                   checked={checkbox}
-                                  onChange={handleCheckbox}
                                   label="Enable “Other” option "
                                 />
                                 
@@ -578,7 +642,6 @@ const Landing = () => {
                                 
                                 <Checkbox
                                   checked={checkbox}
-                                  onChange={handleCheckbox}
                                   label="Enable “Other” option "
                                 />
                                 
@@ -665,7 +728,7 @@ const Landing = () => {
                                 </div>
                                 
                                 <p className={`${styles.change_purple} ${styles.no_pad}`}>
-                                    + Delete question
+                                    + Add video interview questions
                                   </p>
                                 
                                
